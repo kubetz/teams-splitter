@@ -1,0 +1,17 @@
+{
+  "name": "teams",
+  "version": "1.0.0",
+  "description": "",
+  "main": "teams.js",
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "author": "Jakub Kozisek",
+  "contributors": ["Janka Koziskova"],
+  "license": "ISC",
+  "dependencies": {
+    "csv-parser": "^2.3.0",
+    "lodash": "^4.17.15",
+    "sprintf-js": "^1.1.2"
+  }
+}
