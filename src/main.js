@@ -22,18 +22,18 @@ console.timeEnd();
 // full calculation for all teams
 function calculate(start = 0, stations = _.times(STATIONS, _.stubArray), teams = _.times(TEAMS, _.stubArray)) {
   let result;
-  
-  for(let team = start; team < TEAMS; team++) {
+
+  for (let team = start; team < TEAMS; team++) {
     // make sure teams are properly allocated even when calculating deserialized state
     teams[team] = teams[team] || [];
 
     result = assign(team, stations, teams, [])() || assign(team, stations, teams, [], 3)();
-  
+
     // if stations is falsy, then we didn't get the solution pair
     if (!result) {
       return result;
     }
-  
+
     [stations, teams] = result;
   }
   return result;
@@ -44,64 +44,64 @@ function assign(team, stations, teams, friends, size = 2) {
   // we return function to save the parameters in a closure
   return function inner(station_start = 0) {
     // if the team occupies all the stations, we are done
-    let occupancy = teams[team].filter(t => t !== undefined).length;  
-  	if (occupancy == STATIONS) {
-		  return [stations, teams];
+    let occupancy = teams[team].filter(t => t !== undefined).length;
+    if (occupancy == STATIONS) {
+      return [stations, teams];
     }
-  
+
     for (let station = station_start; station < STATIONS; station++) {
-  		// don't assign team to a station it was assigned to before
-		  if (teams[team].indexOf(station) !== -1) {
-  			continue;	
-		  }
+      // don't assign team to a station it was assigned to before
+      if (teams[team].indexOf(station) !== -1) {
+        continue;
+      }
 
-		  for (let round = 0; round < ROUNDS; round++) {
+      for (let round = 0; round < ROUNDS; round++) {
         // check if any of the teams are not in this round on a different station
-			  if (stations.find(st => (st[round] !== undefined ? st[round] : []).indexOf(team) !== -1)) {
-  				continue;
-			  }
-			
-			  let cur = stations[station][round] || [];
-        
-			  // we have max cap on the number of teams in given entry
-			  if (cur.length >= size) {
-	  			continue;
-  			}
+        if (stations.find(st => (st[round] !== undefined ? st[round] : []).indexOf(team) !== -1)) {
+          continue;
+        }
 
-		  	// check if we have already been with teams that area on this entry
-  			if (cur.find(cf => friends.indexOf(cf) !== -1) !== undefined) {
-				  continue;
-			  }
-    
+        let cur = stations[station][round] || [];
+
+        // we have max cap on the number of teams in given entry
+        if (cur.length >= size) {
+          continue;
+        }
+
+        // check if we have already been with teams that area on this entry
+        if (cur.find(cf => friends.indexOf(cf) !== -1) !== undefined) {
+          continue;
+        }
+
         Array.prototype.push.apply(friends, cur);
-			  cur.push(team);
-			  stations[station][round] = cur;
-			  teams[team][round] = station;
+        cur.push(team);
+        stations[station][round] = cur;
+        teams[team][round] = station;
 
         // try another assignment for the team, try allocate 2 teams at max or 3 if that is not possible
         let result = inner(station + 1);
 
-			  // we found the solution for the team, we are done;				
-			  if (result) {
-  				return result;
+        // we found the solution for the team, we are done;				
+        if (result) {
+          return result;
         }
-        
+
         // if no solution was found, we will rollback our changes
         teams[team][round] = undefined;
         cur.pop();
         friends = friends.filter(f => cur.indexOf(f) === -1);
-  		}
-  	}
-	  // we exhausted all the options, there is no solution
-	  return false;
+      }
+    }
+    // we exhausted all the options, there is no solution
+    return false;
   }
 }
 
 function print_output(result) {
   // if stations is falsy, then we didn't get the solution pair
   if (!result) {
-  	console.log("No solution! :(");
-  	return;
+    console.log("No solution! :(");
+    return;
   }
 
   // split the proper result into our structures
@@ -110,13 +110,13 @@ function print_output(result) {
   // output which stations are assigned to which team each round
   console.log('');
   teams.forEach((t, ix) => {
-  	console.log(sprintf('Team %2d: %s', ix + 1, t.map(st => sprintf('%2d', st + 1)).join(' ')));
+    console.log(sprintf('Team %2d: %s', ix + 1, t.map(st => sprintf('%2d', st + 1)).join(' ')));
   });
-	
+
   // output which teams are assigned on which station each round
   console.log('');
   stations.forEach((st, ix) => {
-  	console.log(sprintf('Station %2d:', ix + 1));
-  	st.forEach((teams, ix) => console.log(sprintf('\tRound %2d: %s', ix + 1, teams === undefined ? '-' : teams.map(t => sprintf('%2d', t + 1)).join(' '))));
+    console.log(sprintf('Station %2d:', ix + 1));
+    st.forEach((teams, ix) => console.log(sprintf('\tRound %2d: %s', ix + 1, teams === undefined ? '-' : teams.map(t => sprintf('%2d', t + 1)).join(' '))));
   });
 }

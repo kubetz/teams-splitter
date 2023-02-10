@@ -11,7 +11,7 @@ let friends = JSON.parse("[[1,4,27,3,28,2,23,7,11,22,9,25,5,8,13,10,24,12,6,19],
 for (let i = 0; i < TEAMS; i++) {
   // check if the team was matched with each other team max once
   findDuplicates(friends[i]).forEach(v => console.log(`Team ${i + 1} was with team ${v + 1} multiple times!`))
-  
+
   // check if each team is at each station once
   findDuplicates(teams[i]).forEach(v => console.log(`Team ${i + 1} visited station ${v + 1} multiple times!`))
 }
